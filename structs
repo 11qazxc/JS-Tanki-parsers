@@ -1,0 +1,49 @@
+//TODO use common transform instead of scale/rot/pos
+tex:file:buffer|name,offset?,size?,alpha:tex?//in pixels; no diffuse color
+    //if file's buffer isn't loaded name is used as path for fetch
+    //if offset isn't defined it's [0,0]
+    //if size isn't defined it's equal to size of image in buffer
+    //there's no machinery for textures at the moment
+mesh:V,UV,UV2?,groups:{F,N,tex}[],name?
+    //smooth group is a set of faces and a set of norms
+
+tara:{name:string,buff:buffer}[]
+
+box:size,rot,pos
+    //box with size z==0 is rect
+collider:box|mesh//triangle colliders must be combined into one mesh
+
+prop type:colliders,lods:mesh[],imgs:tex[]//lod0 is most detailed one
+group:{name=>prop type}
+proplib:_root_dir:string|tara,name=>group
+
+tile:lib,group,name,
+     lightmap:tex?,tex:string|int?,
+     scale?,rot?,pos?,
+     lods?,colliders?
+    //string tex refers to prop's imgs, but int refers to map's atlases
+    //it overrides tex of all groups of all meshes
+    //renderer must use own lods and colliders if they exist
+    //but parser must not store them if possible
+    //collider array with zero length is still collider
+    //same for lods
+
+team:string|null//mode must be 2-3char abbreviation; team null means "any"
+    //both mode and team must be lowercase;
+spawn:modes:string[],team,pos,rot
+bonus:name:string?,types:string[],size,rot,pos//like box collider
+mode-specific:type:string?,team,scale?,rot?,pos?//flags, points etc
+
+map:tiles,bonuses,spawns,modes:{mode=>mode-specific[]},atlases:tex[]?
+    //colliders that aren't bound to tiles must be stored in a tile with lib=="_"
+
+//k is (string) first bytes of file, longer keys matched first
+//Buffer might also be DataView but with some patching it'll be equivalent
+global meshImport:{k=>((Buffer)=>mesh[])}//those return *arrays* of meshes
+global mapImport:{k=>((Buffer)=>map)}
+//just array, use first one that works
+global libImport:(async (root url|tara)=>proplib)[]
+
+global mapExport:{k=>((map)=>string|Buffer)}//k is arbitrary
+
+global libcache:{name=>proplib}
