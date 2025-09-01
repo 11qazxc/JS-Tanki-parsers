@@ -5,7 +5,7 @@ if(global.env=="node"){
         let s=require("node:fs").readFileSync("./vec.js","utf-8")
         s=s.replaceAll(/\nfunction ([^()]*)\(/g,"\nglobal.$1=function $1(")
         eval(s)
-        console.log(global.vaddI)
+//        console.log(global.vaddI)
     }
 }
 

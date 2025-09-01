@@ -19,9 +19,11 @@ let _d
 }
 
 function getProplibPath(lib){
-    const git="https://raw.githubusercontent.com/MapMakersAndProgrammers/tanki-prop-libraries/refs/heads/main/flash"
-    const htgit="https://raw.githubusercontent.com/MapMakersAndProgrammers/tanki-prop-libraries/refs/heads/main/html5"
-    return git+"/proplib_"+lib.toLowerCase().replaceAll(" ","_")
+//    const git="https://raw.githubusercontent.com/MapMakersAndProgrammers/tanki-prop-libraries/refs/heads/main/flash"
+//    const htgit="https://raw.githubusercontent.com/MapMakersAndProgrammers/tanki-prop-libraries/refs/heads/main/html5"
+    const git="https://github.com/MapMakersAndProgrammers/tanki-prop-libraries/raw/refs/heads/main/flash/new"
+    const htgit="https://github.com/MapMakersAndProgrammers/tanki-prop-libraries/raw/refs/heads/main/html5"
+    return git+"/"+lib.toLowerCase().replaceAll(" ","_")
     return htgit+"/"+lib
 }
 ;(async function(){
@@ -58,12 +60,12 @@ const nolib={}
 console.log("o colls")
 for(let e of _d.tiles){
     if(e.lib=="_"){continue};
-    if(!libcache[e.lib]||!libcache[e.lib][e.group]||!libcache[e.lib][e.group][e.name]){
-        nolib[e.lib+"/"+e.group+"/"+e.name]=0
-    }//else{nolib[e.lib+"/"+e.group+"/"+e.name]=1}
+    const p=e.lib+"/"+e.group+"/"+e.name
+    nolib[p]=abs(nolib[p]||0)+1
+    if(!libcache[e.lib]||!libcache[e.lib][e.group]||!libcache[e.lib][e.group][e.name]){nolib[p]=-abs(nolib[p])}
     logMesh(meshTileC(e))
 }
-//console.error(Object.keys(nolib))
+console.error(nolib)
 console.error("coll store:",(-(t0-(t0=performance.now())))|0,"ms")
 
 console.log("o vis")
